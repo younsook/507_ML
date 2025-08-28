@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>감정분석</title>
+  </head>
+  <body>
+    <h1>감정분석</h1>
+        <textarea id="text-input" placeholder="리뷰를 작성해주세요"></textarea>
+        <button onclick="analyze()">분석하기</button>
+        <div id="result"></div>
+    <script>
+        async function analyze() {
+            const text = document.getElementById("text-input").value;
+            const response = document.getElementById("result");
+            const resutDiv = document.getElementById("result");
+
+            if (!text) {
+          resultDiv.textContent = "리뷰를 입력해주세요.";
+          return;
+        }
+            
+
+            try{
+                const response = await fetch("http://127.0.0.1:8000/predict", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({text})
+                })
+                const data = await response.json()
+                console.log(data)
+                if(!response.ok){
+                    throw new Error(data.error || 'API에 문제가 있습니다.')
+                }
+                if(data.emotion == 1) resutDiv.textContent = "긍정"
+                else resutDiv.textContent = "부정"
+            
+
+            }catch(error){
+                console.log(error)
+                resutDiv.textContent = `오류:${error.message}`
+            }
+        }
+    </script>
+ 
+  </body>
+</html>
